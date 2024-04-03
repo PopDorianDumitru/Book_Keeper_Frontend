@@ -1,0 +1,18 @@
+.individual-book{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 0.5em;
+    background: rgb(255, 210, 126);
+    padding: 1em;
+    border-radius: 1em;
+}
+
+.individual-book-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+

@@ -1,0 +1,94 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #FBAB7E;
+  background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);
+  min-height: 100vh;
+}
+
+.App button{
+  border-radius: 1em;
+  outline: none;
+  border: none;
+  background-color: #ffb300;
+  margin-top: 0.5em;
+  color: whitesmoke;
+  padding: 0.5em 1em 0.5em 1em; 
+  font-size: 1em;
+  transition-property: background-color;
+  transition-duration: 0.2s;
+}
+.App button:hover{
+  background-color: #da9902;
+}
+
+
+.App input{
+  border-radius: 1em;
+  padding: 0.5em 1em 0.5em 1em;
+  outline: none;
+  border: none;
+}
+
+.App p{
+  color: white;
+}
+
+.App label{
+  text-align: center;
+  color: black;
+}
+
+.App input:focus{
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: #00DBDE;
+}
+
+.notificationMessage{
+  background-color: rgb(255, 203, 73);
+  margin-top: 0.5em;
+  border-radius: 1em;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+.notificationMessage p{
+  margin: 0;
+}
+
+.page-link{
+  color: white;
+  text-decoration: none;
+  background-color: darkviolet;
+  text-align: center;
+  padding: 0.3em 1em 0.3em 1em;
+  border-radius: 1em;
+  transition-property: background-color;
+  transition-duration: 0.5s;
+  margin-top: 0.5em;
+}
+.page-link p{
+  margin: 0;
+}
+.page-link:hover{
+  background-color: rgb(68, 0, 97);
+}
+
+.error-message{
+  background-color: rgb(253, 58, 58);
+  color: white;
+  padding: 0.3em 1em 0.3em 1em;
+  margin-top: 0.5em;
+  border-radius: 1em;
+}
+.error-message p{
+  margin: 0;
+  
+}
+.twin-buttons{
+  display: flex;
+  flex-direction: row;
+  gap:0.2em;
+}

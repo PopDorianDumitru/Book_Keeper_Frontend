@@ -1,0 +1,22 @@
+
+.book-display{
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+    height: fit-content;
+    padding: 1em;
+    text-wrap: wrap;
+    word-wrap:break-word;
+    background-color:rgb(253, 196, 91);
+    border-radius: 1em;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.book-display button{
+    flex-grow: 1;
+}
+.book-display p{
+    margin: 0.2em;
+}
+

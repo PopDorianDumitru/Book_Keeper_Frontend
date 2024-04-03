@@ -1,0 +1,24 @@
+
+.book-list-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
+    
+    border-radius: 1em;
+    justify-content: center;
+}
+
+.book-list-form{
+    max-width: 15em;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(255, 210, 126);
+    border-radius: 1em;
+    padding: 1em;
+    flex-wrap: wrap;
+    justify-content:last baseline;
+    max-height: 30em;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
