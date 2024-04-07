@@ -1,0 +1,16 @@
+
+
+.notification{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color:rgb(47, 47, 47);
+    color: white;
+    font-size: 1.2em;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    animation: slideIn 0.5s forwards, slideOut 0.5s forwards 2.5s;
+}

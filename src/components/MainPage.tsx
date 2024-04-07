@@ -1,5 +1,4 @@
 import BookForm from './formTemplate';
-import { Book } from '../interfaces/BooksInterface';
 import { Link } from 'react-router-dom';
 import '../css/MainPage.css'
 

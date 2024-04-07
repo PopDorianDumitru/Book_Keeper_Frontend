@@ -1,5 +1,5 @@
 import React from "react";
-import { Book } from "../interfaces/BooksInterface";
+
 import { useParams } from "react-router-dom";
 import BookDisplay from "./BookDisplay";
 import { useNavigate } from "react-router-dom";

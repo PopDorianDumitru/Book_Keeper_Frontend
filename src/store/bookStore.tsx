@@ -2,8 +2,14 @@ import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 import {Book} from '../interfaces/BooksInterface'
 
+interface BookReview{
+    user: string,
+    review: string,
+}
+
 interface BookState{
     books: Book[];
+    bookReviews: BookReview[];
     checkmarkedBooks: string[];
     setBooks: (books: Book[])=>void;
     addBook: (book: Book)=>void;
@@ -12,6 +18,7 @@ interface BookState{
     removeCheckmarkedBook: (id: string)=>void;
     deleteCheckmarkedBooks: ()=>void;
     updateBook: (id: string, updatedBook: Book)=>void;
+    addBookReview: (review: BookReview)=>void;
     
 }
 
@@ -19,7 +26,9 @@ const useBookStore = create<BookState>()(
     persist(
         (set,get)=>({
             books: [],
+            bookReviews: [],
             checkmarkedBooks: [],
+            addBookReview: (review)=> set({bookReviews: [...get().bookReviews, review]}),
             addBook: (book)=> set({books: [...get().books, book]}),
             setBooks: (books) => set({books}),
             removeBook: (id) => set({books: get().books.filter(b=>b.ID !== id)}),

@@ -1,16 +1,15 @@
 import { useState } from "react";
 import InputTemplate from "./inputTemplate";
-import { Book } from "../interfaces/BooksInterface";
 import '../css/BookForm.css'
 import useBookStore from "../store/bookStore";
-import axios from "axios";
+import useAxiosStore from "../store/axiosStore";
 const uuid = require('uuid');
 
 
 function BookForm(){
     
-    const {addBook, books} = useBookStore(state=>state);
-
+    const {addBook} = useBookStore(state=>state);
+    const {getAxiosInstance} = useAxiosStore(state=>state);
     // const [ID, setID] = useState("");
     let ID ="";
     const [title, setTitle] = useState("");
@@ -66,24 +65,28 @@ function BookForm(){
         // }
      
         ID = uuid.v4();
-        axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`, {ID, title, author, language, year})
+        getAxiosInstance()
+        .post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`, {ID, title, author, language, year})
         .then((response)=>{
-            console.log(response)
-            addBook(
-                {
-                    ID: response.data.ID, title, author, language, year
-                }
-            );
+            console.log("For the post "+ response);
+            if(response !== undefined)
+                addBook(
+                    {
+                        ID: response.data.ID, title, author, language, year
+                    }
+                );
             setVisibleNotification(true);
             setTimeout(()=>{
                 setVisibleNotification(false);
             }, 3000);
-        }).catch((error)=>{
-            console.log(error);
-            setVisibleWarning(error.response.data);
-            setTimeout(()=>{
-                setVisibleWarning("");
-            }, 5000);
+        })
+        .catch((error)=>{
+            if(error.code !== "ERR_NETWORK"){
+                setVisibleWarning("You must fill in all fields other than 'Year Published'!");
+                setTimeout(()=>{
+                    setVisibleWarning("");
+                }, 5000);
+            }
         });
         
         ID = "";

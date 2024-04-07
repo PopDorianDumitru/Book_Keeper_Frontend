@@ -1,12 +1,13 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from "./MainPage";
 import BookListDisplay from "./BookList";
 import IndividualBook from "./IndividualBook";
 import BookDisplayWrapper from "./BookDisplayWrapper";
-import axios from "axios";
 import useBookStore from "../store/bookStore";
+import useAxiosStore from "../store/axiosStore";
+import useNotificationStore from "../store/notificationStore";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -14,11 +15,13 @@ This component is necessary if I don't store the elements in a database or a fil
 */
 
 function WebsiteWrapper(){
-    console.log(process.env.REACT_APP_SERVER_PORT);
+    const socketInstance = useRef<WebSocket>();
     // const [books, setBooks] = useState<Book[]>([]);
     // const [checkmarkedBooks, setCheckmarkedBooks] = useState<string[]>([]);
-    const {books, setBooks} = useBookStore();
+    const {setBooks, addBookReview} = useBookStore(state=>state);
     const [fromStart, setFromStart] = useState<Boolean>(true);
+    const {getAxiosInstance} = useAxiosStore(state=>state);
+    const {setNotification, removeNotification} = useNotificationStore(state=>state);
     // const addBook = (book : Book)=>{
     //     console.log("Adding a book");
     //     console.log(process.env.REACT_APP_SERVER_PORT);
@@ -33,16 +36,37 @@ function WebsiteWrapper(){
 
     
     useEffect(()=>{
-        axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`).then((response)=>{
-            setBooks(response.data);
-        }).catch((error)=>{
-            console.log("Error in fetching books from the server");
-        });
+        if(fromStart){
+            removeNotification();
+            if(!socketInstance.current){
+            
+                const ws = new WebSocket(`ws://localhost:8081/`);
+                socketInstance.current = ws;
+                socketInstance.current.onmessage = (ev)=>{
+                    const data = JSON.parse(ev.data);
+                    addBookReview(data);
+                    setNotification(data);
+                    setTimeout(()=>{
+                        removeNotification();
+                    }, 3000);
+                };
+            }  
+            getAxiosInstance().get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`).then((response)=>{
+                setBooks(response.data);
+            }).catch((error)=>{
+                console.log(error);
+                console.log("Error in fetching books from the server");
+            });
+            console.log("Entered already existing books");
+            setFromStart(false);
+           
+
+        }
         // if(booksInStorage != null)
         // {
         //     setBooks(JSON.parse(booksInStorage));
         // }
-        console.log("Entered already existing books");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     
@@ -115,13 +139,12 @@ function WebsiteWrapper(){
     //     }
     // }
 
-    useEffect(()=>{
-        if(books.length !== 0 || !fromStart){
-            console.log("Trying to update books in local storage ");
-            localStorage.setItem("book-list", JSON.stringify(books));
-            setFromStart(false);
-        }
-    }, [books, fromStart])
+    // useEffect(()=>{
+    //     if(books.length !== 0){
+    //         console.log("Trying to update books in local storage ");
+    //         localStorage.setItem("book-list", JSON.stringify(books));
+    //     }
+    // }, [books])
 
     return (
         <BrowserRouter>

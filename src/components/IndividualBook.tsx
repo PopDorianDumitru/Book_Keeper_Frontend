@@ -4,11 +4,11 @@ import { Link, useParams } from "react-router-dom";
 import '../css/IndividualBook.css'
 import '../css/BookForm.css'
 import useBookStore from "../store/bookStore";
-import axios from "axios";
+import useAxiosStore from "../store/axiosStore";
 function IndividualBook(){
 
     const {books, updateBook} = useBookStore(state=>state);
-
+    const {getAxiosInstance} = useAxiosStore(state=>state);
     const {id} = useParams();
     let book = books.find(b=>b.ID === id) as Book;
     if(typeof book == "undefined")
@@ -31,7 +31,7 @@ function IndividualBook(){
             }, 5000);
             return;
         }
-        axios
+        getAxiosInstance()
         .patch(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books/${ID}`, {ID , title, author, language, year})
         .then((response)=>{
 
@@ -42,10 +42,12 @@ function IndividualBook(){
                 setNotMessageVisible(false);
             }, 3000);
         }).catch((error)=>{
-            setVisibleWarning(error.response.data);
-            setTimeout(()=>{
-                setVisibleWarning("");
-            }, 5000);
+            if(error.code !== "ERR_NETWORK"){
+                setVisibleWarning("Umnable to update book. Error: " + error.message);
+                setTimeout(()=>{
+                    setVisibleWarning("");
+                }, 5000);
+            }
         });
         
     }
