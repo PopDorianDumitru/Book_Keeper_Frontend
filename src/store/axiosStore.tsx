@@ -25,6 +25,7 @@ const useAxiosStore = create<AxiosState>()(
             instance.interceptors.response.use((response) => {
                 return response
             }, (error) => {
+                console.log(error);
                 if(error.code === "ERR_NETWORK")
                 {
                     console.log("Network error. The server is not responding. Please try again later");

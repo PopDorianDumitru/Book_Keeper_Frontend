@@ -23,7 +23,7 @@ function BookListDisplay(){
         if(window.confirm("Are you sure you want to delete all selected books?")){
             try{
                 checkmarkedBooks.forEach((ID:string)=>{
-                    getAxiosInstance().delete(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books/${ID}`).catch((error)=>{
+                    getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`).catch((error)=>{
                         window.alert("Error in deleting books:" + error.message);
                     })
                     ;

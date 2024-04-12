@@ -66,7 +66,7 @@ function BookForm(){
      
         ID = uuid.v4();
         getAxiosInstance()
-        .post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`, {ID, title, author, language, year})
+        .post(`${process.env.REACT_APP_BASIC_URL}/books`, {ID, title, author, language, year})
         .then((response)=>{
             console.log("For the post "+ response);
             if(response !== undefined)
@@ -81,11 +81,25 @@ function BookForm(){
             }, 3000);
         })
         .catch((error)=>{
+        
             if(error.code !== "ERR_NETWORK"){
                 setVisibleWarning("You must fill in all fields other than 'Year Published'!");
                 setTimeout(()=>{
                     setVisibleWarning("");
                 }, 5000);
+            }
+            else
+            {
+                addBook(
+                    {
+                        ID, title, author, language, year
+                    }
+                );
+                setVisibleNotification(true);
+            setTimeout(()=>{
+                setVisibleNotification(false);
+            }, 3000);
+
             }
         });
         

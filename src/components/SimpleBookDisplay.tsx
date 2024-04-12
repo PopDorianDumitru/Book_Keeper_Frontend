@@ -11,7 +11,7 @@ function SimpleBookDisplay({ID, title, author, language,year}:Book){
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const deleteBook = (ID:string) =>{
         if(window.confirm("Are you sure you want to delete the book with the following ID: " + ID + "?")){
-            getAxiosInstance().delete(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books/${ID}`)
+            getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`)
             .then((response)=>{
                 removeBook(ID);
                 window.alert("Book has been deleted");

@@ -32,7 +32,7 @@ function IndividualBook(){
             return;
         }
         getAxiosInstance()
-        .patch(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books/${ID}`, {ID , title, author, language, year})
+        .patch(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`, {ID , title, author, language, year})
         .then((response)=>{
 
             console.log("Got here")

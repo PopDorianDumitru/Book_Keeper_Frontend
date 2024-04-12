@@ -40,7 +40,7 @@ function WebsiteWrapper(){
             removeNotification();
             if(!socketInstance.current){
             
-                const ws = new WebSocket(`ws://localhost:8081/`);
+                const ws = new WebSocket(`${process.env.REACT_APP_SOCKET_URL}`);
                 socketInstance.current = ws;
                 socketInstance.current.onmessage = (ev)=>{
                     const data = JSON.parse(ev.data);
@@ -51,7 +51,7 @@ function WebsiteWrapper(){
                     }, 3000);
                 };
             }  
-            getAxiosInstance().get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/books`).then((response)=>{
+            getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/books`).then((response)=>{
                 setBooks(response.data);
             }).catch((error)=>{
                 console.log(error);
