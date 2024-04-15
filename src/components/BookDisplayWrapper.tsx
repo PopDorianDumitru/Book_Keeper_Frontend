@@ -15,9 +15,7 @@ function BookDisplayWrapper(){
         return(<div></div>);
     }
     return(
-        <div>
             <BookDisplay ID={book!.ID} title={book!.title} author={book!.author} language={book!.language} year={book!.year}></BookDisplay>
-        </div>
     )
 }
 

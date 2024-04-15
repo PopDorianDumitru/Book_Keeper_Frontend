@@ -2,6 +2,7 @@
 .book-display{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin: 1em;
     height: fit-content;
     padding: 1em;
@@ -11,6 +12,11 @@
     border-radius: 1em;
     width: 100%;
     overflow-x: hidden;
+    max-width: 30%;
+}
+
+.book-display-list{
+    max-width: 100%;
 }
 
 .book-display button{

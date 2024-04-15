@@ -43,7 +43,7 @@ function IndividualBook(){
             }, 3000);
         }).catch((error)=>{
             if(error.code !== "ERR_NETWORK"){
-                setVisibleWarning("Umnable to update book. Error: " + error.message);
+                setVisibleWarning("Unable to update book. Error: " + error.response.data);
                 setTimeout(()=>{
                     setVisibleWarning("");
                 }, 5000);

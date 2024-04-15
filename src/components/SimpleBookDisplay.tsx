@@ -29,7 +29,7 @@ function SimpleBookDisplay({ID, title, author, language,year}:Book){
 
 
     return (
-        <div className="book-display">
+        <div className="book-display book-display-list">
             <p>Title: {title}</p>
             <p>Author: {author}</p>
             <button onClick={()=>{deleteBook(ID)}}>Remove Book</button>

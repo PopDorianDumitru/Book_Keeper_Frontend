@@ -8,6 +8,7 @@ import BookDisplayWrapper from "./BookDisplayWrapper";
 import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
 import useNotificationStore from "../store/notificationStore";
+import BookReviewForm from "./BookReviewForm";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -57,6 +58,7 @@ function WebsiteWrapper(){
                 console.log(error);
                 console.log("Error in fetching books from the server");
             });
+            
             console.log("Entered already existing books");
             setFromStart(false);
            
@@ -153,6 +155,7 @@ function WebsiteWrapper(){
                 <Route path="/" element={<BookListDisplay></BookListDisplay>}></Route>
                 <Route path="/book/:id" element={<IndividualBook ></IndividualBook> }></Route>
                 <Route path="/book/details/:id" element={<BookDisplayWrapper></BookDisplayWrapper>}></Route>
+                <Route path="/review/:bookId" element={<BookReviewForm></BookReviewForm>}></Route>
             </Routes>
         </BrowserRouter>
     )

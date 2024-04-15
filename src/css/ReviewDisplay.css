@@ -1,0 +1,31 @@
+
+
+.review-display{
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+    height: fit-content;
+    padding: 1em;
+    text-wrap: wrap;
+    word-wrap:break-word;
+    background-color:rgb(255, 175, 25);
+    border-radius: 1em;
+}
+
+h2{
+    color: whitesmoke;
+    margin: 0;
+
+}
+
+h3{
+    color: gold;
+    margin: 0;
+}
+
+.review-display pre{
+    white-space: pre-wrap;
+    color: white;
+    word-wrap: break-word;
+    font-family: inherit;
+}

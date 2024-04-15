@@ -18,3 +18,16 @@
     margin: 0;
     flex-grow: 1;
 }
+
+.input-template textarea{
+    resize: none;
+    overflow-y:hidden;
+    margin: 0;
+    flex-grow: 1;
+    border-radius: 1em;
+    height: 15em;
+    outline: none;
+    padding: 0.5em 1em 0.5em 1em;
+    border: none;
+    white-space-collapse:preserve-breaks;
+}

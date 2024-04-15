@@ -83,7 +83,7 @@ function BookForm(){
         .catch((error)=>{
         
             if(error.code !== "ERR_NETWORK"){
-                setVisibleWarning("You must fill in all fields other than 'Year Published'!");
+                setVisibleWarning(error.response.data);
                 setTimeout(()=>{
                     setVisibleWarning("");
                 }, 5000);
