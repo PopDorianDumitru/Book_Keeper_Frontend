@@ -26,7 +26,7 @@ function BookReviewForm(){
     const [visibleWarning, setVisibleWarning] = useState("");
     const tryAddReview = () => {
         getAxiosInstance()
-        .post(`${process.env.REACT_APP_BASIC_URL}/reviews`, {rating, content, username, bookId: foundBook?.ID})   
+        .post(`${process.env.REACT_APP_BASIC_URL}/reviews`, {rating, content, username, bookId: foundBook?.ID, userId: "fkdslfjsdkflsd"})   
         .then((response)=>{
             if(response !== undefined)
             {

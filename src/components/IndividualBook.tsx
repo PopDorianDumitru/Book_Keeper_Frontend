@@ -32,11 +32,11 @@ function IndividualBook(){
             return;
         }
         getAxiosInstance()
-        .patch(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`, {ID , title, author, language, year})
+        .patch(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`, {title, author, language, year})
         .then((response)=>{
 
             console.log("Got here")
-            updateBook(ID, {ID , title, author, language, year});
+            updateBook(ID, {ID, title, author, language, year});
             setNotMessageVisible(true);
             setTimeout(()=>{
                 setNotMessageVisible(false);
