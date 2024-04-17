@@ -11,6 +11,7 @@ interface BookState{
     books: Book[];
     bookReviews: BookReview[];
     checkmarkedBooks: string[];
+    sortingFields: string[];
     setBooks: (books: Book[])=>void;
     addBook: (book: Book)=>void;
     removeBook: (id: string)=>void;
@@ -19,6 +20,8 @@ interface BookState{
     deleteCheckmarkedBooks: ()=>void;
     updateBook: (id: string, updatedBook: Book)=>void;
     addBookReview: (review: BookReview)=>void;
+    addSortingField: (field: string)=>void;
+    removeSortingField: (field: string)=>void;
     
 }
 
@@ -27,6 +30,10 @@ const useBookStore = create<BookState>()(
         (set,get)=>({
             books: [],
             bookReviews: [],
+            sortingFields:[],
+            addSortingField: (field)=> set({sortingFields: [...get().sortingFields, field]}),
+            removeSortingField: (field)=> set({sortingFields: get().sortingFields.filter(f=>f !== field)}),
+
             checkmarkedBooks: [],
             addBookReview: (review)=> set({bookReviews: [...get().bookReviews, review]}),
             addBook: (book)=> set({books: [...get().books, book]}),

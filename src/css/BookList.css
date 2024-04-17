@@ -22,3 +22,27 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.searching-form{
+    max-width: 15em;
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(255, 166, 0);
+
+    border-radius: 1em;
+    padding: 1em;
+    max-height: 30em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-left: 1em;
+    color: white;
+}
+
+.searching-form label{
+    color: white;
+}
+
+.book-list{
+    display: flex;
+    flex-direction: row;
+}
