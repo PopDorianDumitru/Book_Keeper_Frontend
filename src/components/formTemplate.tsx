@@ -8,7 +8,7 @@ const uuid = require('uuid');
 
 function BookForm(){
     
-    const {addBook} = useBookStore(state=>state);
+    const {addBook, addDirtyBook} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
     // const [ID, setID] = useState("");
     let ID ="";
@@ -20,49 +20,35 @@ function BookForm(){
     const [visibleWarning, setVisibleWarning] = useState("");
     const tryAddBook = ()=>{
 
-        // if(ID.length < 8)
-        // {
-        //     setVisibleWarning("Id must have a length of at least 8!");
-        //     setTimeout(()=>{
-        //         setVisibleWarning("");
-        //     }, 5000);
-        //     return;
-        // }
-        // if(title.length === 0)
-        // {
-        //     setVisibleWarning("Title must not be blank");
-        //     setTimeout(()=>{
-        //         setVisibleWarning("");
-        //     }, 5000);
-        //     return;
-        // }
-        // if(language.length===0)
-        // {
-        //     setVisibleWarning("Language must not be blank");
-        //     setTimeout(()=>{
-        //         setVisibleWarning("");
+       
+        if(title.length === 0)
+        {
+            setVisibleWarning("Title must not be blank");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
+        if(language.length===0)
+        {
+            setVisibleWarning("Language must not be blank");
+            setTimeout(()=>{
+                setVisibleWarning("");
 
-        //     }, 5000);
-        //     return;
-        // }
+            }, 5000);
+            return;
+        }
         
-        // if(Number.parseInt((document.getElementById("year") as HTMLInputElement).value) < 0)
-        // {
-        //     setVisibleWarning("Year must be a positive number or empty");
-        //     setTimeout(()=>{
-        //         setVisibleWarning("");
-        //     }, 5000);
-        //     return;
-        // }
+        if(Number.parseInt((document.getElementById("year") as HTMLInputElement).value) < 0)
+        {
+            setVisibleWarning("Year must be a positive number or empty");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
 
-        // if(books.findIndex(book => book.ID === ID) !== -1)
-        // {
-        //     setVisibleWarning("That ID is already in use");
-        //     setTimeout(()=>{
-        //         setVisibleWarning("");
-        //     }, 5000);
-        //     return;
-        // }
+       
      
         ID = uuid.v4();
         getAxiosInstance()
@@ -89,10 +75,11 @@ function BookForm(){
                 }, 5000);
             }
             else
+            if(error.code === "ERR_NETWORK")
             {
-                addBook(
+                addDirtyBook(
                     {
-                        ID, title, author, language, year
+                        ID: uuid.v4(), title, author, language, year, existed: false, deleted: false
                     }
                 );
                 setVisibleNotification(true);

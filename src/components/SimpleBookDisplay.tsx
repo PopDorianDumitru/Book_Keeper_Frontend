@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
-function SimpleBookDisplay({ID, title, author, language,year}:Book){
+function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBooks}:Book&{updateAvailableBooks:()=>void}){
 
-    const {addCheckmarkedBook, removeCheckmarkedBook, removeBook} = useBookStore((state)=>state);
+    const {addCheckmarkedBook, setDirtyBookById, removeCheckmarkedBook, removeBook, getBookById, getDirtyBookById, addDirtyBook} = useBookStore((state)=>state);
     const [warningMessage, setVisibleWarning] = useState("");
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const deleteBook = (ID:string) =>{
@@ -14,6 +14,7 @@ function SimpleBookDisplay({ID, title, author, language,year}:Book){
             getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`)
             .then((response)=>{
                 removeBook(ID);
+                updateAvailableBooks();
                 window.alert("Book has been deleted");
             })
             .catch((error)=>{
@@ -22,6 +23,26 @@ function SimpleBookDisplay({ID, title, author, language,year}:Book){
                     setTimeout(()=>{
                         setVisibleWarning("");
                     }, 5000);
+                }
+                else{
+                    //Either the book is dirty or not dirty
+                    const goodBook = getBookById(ID);
+                    if(goodBook !== undefined)
+                    {
+                        removeBook(ID);
+                        addDirtyBook({...goodBook, existed: true, deleted: true});
+                    }
+                    else{
+                        const dirtyBook = getDirtyBookById(ID);
+                        console.log(dirtyBook);
+                        if(dirtyBook !== undefined)
+                        {
+                            setDirtyBookById(dirtyBook.ID,{...dirtyBook, deleted: true});
+                            console.log("Dirty book added to dirty books with deleted set to true");
+                        }
+                        
+                    }
+                    updateAvailableBooks();
                 }
             });
         }

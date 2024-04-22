@@ -6,6 +6,7 @@ import useAxiosStore from "../store/axiosStore";
 import NotificationDisplay from './NotificationDisplay';
 import useNotificationStore from '../store/notificationStore';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { Book } from '../interfaces/BooksInterface';
 function BookListDisplay(){
     const [sortingFields, setSortingFields] = useState<{field: string, order: string}[]>([]);
     const [sortingLabel, setSortingLabel] = useState("None");
@@ -20,18 +21,42 @@ function BookListDisplay(){
         .then((response)=>{
             console.log(response.data);
             setBooks(response.data);
+            setAvailableBooks(response.data);
         })
         .catch((err)=>{
-            window.alert("Failed to sort: " + err.response.data)
+            if(err.code === "ERR_NETWORK")
+            {
+                const dirty:Book[] = getDirtyBooks().filter(bk=>!bk.deleted).map(bk=>({
+                    ID: bk.ID,
+                    title: bk.title,
+                    author: bk.author,
+                    language: bk.language,
+                    year: bk.year
+                }))
+                console.log(dirty);
+                setAvailableBooks([...getBooks(), ...dirty]);
+            }
         })
         setSortingLabel(sortingFields.length === 0 ? "None" : sortingFields.reduce((acc, obj)=>acc + obj.field + " " + obj.order + ", ", "").slice(0, -2));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sortingFields])
     
+    const updateAvailableBooks = ()=>{
+        setAvailableBooks([...getBooks(), ...getDirtyBooks().filter(bk=>!bk.deleted).map(bk=>({
+            ID: bk.ID,
+            title: bk.title,
+            language: bk.language,
+            author: bk.author,
+            year: bk.year
+        }))
+        ])
+    }
     const {visible}= useNotificationStore(state=>state);
-    const {books, setBooks, deleteCheckmarkedBooks, checkmarkedBooks} = useBookStore(state=>state);
+    const [availableBooks, setAvailableBooks] = useState<Book[]>([]);
+    const {getDirtyBooks, getBooks,setBooks, deleteCheckmarkedBooks, checkmarkedBooks} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
     function exportToJSON(){
-        const blob = new Blob([JSON.stringify(books)], {type: 'application/json'});
+        const blob = new Blob([JSON.stringify(availableBooks)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -67,7 +92,11 @@ function BookListDisplay(){
                     ;
                 });
                 window.alert("Deleted all boks");
+                setAvailableBooks([...(availableBooks.filter((book)=>{
+                    return checkmarkedBooks.findIndex((b)=>b === book.ID) === -1;
+                }))]);
                 deleteCheckmarkedBooks();
+                
             }catch(error){
                 window.alert("Error in deleting books:" + error);
             }
@@ -88,7 +117,7 @@ function BookListDisplay(){
             <div className='book-list'>
                 <div className="book-list-form">
                     {
-                        books.length !== 0?  books.map(book => <SimpleBookDisplay key={book["ID"]} ID={book["ID"]} title={book["title"]} author={book["author"]} language={book["language"]} year={book["year"]} />)
+                        availableBooks.length !== 0?  availableBooks.map(book => <SimpleBookDisplay key={book["ID"]} ID={book["ID"]} title={book["title"]} author={book["author"]} language={book["language"]} year={book["year"]} updateAvailableBooks={updateAvailableBooks} />)
                                             :  <h2>No books added</h2>
                     }
                 </div>

@@ -7,12 +7,26 @@ import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
 function IndividualBook(){
 
-    const {books, updateBook} = useBookStore(state=>state);
+    const {books, getBookById, getDirtyBookById, setDirtyBookById, addDirtyBook, removeBook, updateBook} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const {id} = useParams();
     let book = books.find(b=>b.ID === id) as Book;
     if(typeof book == "undefined")
-        book = {ID: "", title:"", author:"", language:"", year:-2} as Book;
+    {
+        if(id !== undefined)
+        {
+            book = getDirtyBookById(id) as Book;
+            if(typeof book === "undefined")
+            {
+                book = {ID: "", title:"", author:"", language:"", year:-2} as Book;
+            }
+        }
+        else
+        {
+            book = {ID: "", title:"", author:"", language:"", year:-2} as Book;
+        }
+
+    }
     let oldBook = book;
     let ID = book.ID;
     const [title, setTitle] = useState(book.title);
@@ -23,6 +37,24 @@ function IndividualBook(){
     const [warningMessage, setVisibleWarning] = useState("");
     const saveChanges = () =>{
         
+        if(title.length === 0)
+        {
+            setVisibleWarning("Title must not be blank");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
+        if(language.length===0)
+        {
+            setVisibleWarning("Language must not be blank");
+            setTimeout(()=>{
+                setVisibleWarning("");
+
+            }, 5000);
+            return;
+        }
+            
         if(Number.parseInt((document.getElementById("year") as HTMLInputElement).value) < 0)
         {
             setVisibleWarning("Year must be a positive number or empty");
@@ -31,6 +63,7 @@ function IndividualBook(){
             }, 5000);
             return;
         }
+    
         getAxiosInstance()
         .patch(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`, {title, author, language, year})
         .then((response)=>{
@@ -48,6 +81,31 @@ function IndividualBook(){
                     setVisibleWarning("");
                 }, 5000);
             }
+            else{
+                const goodBook = getBookById(ID);
+                if(goodBook !== undefined)
+                {
+                    removeBook(ID);
+                    addDirtyBook({...goodBook,title, author, language, year, existed: true, deleted: false});
+                    setNotMessageVisible(true);
+                    setTimeout(()=>{
+                        setNotMessageVisible(false);
+                    }, 3000);
+                }
+                else
+                {
+                    const dirtyBook = getDirtyBookById(ID);
+                    if(dirtyBook !== undefined)
+                    {
+                        setDirtyBookById(ID, {...dirtyBook, title, author, language, year});
+                        setNotMessageVisible(true);
+                        setTimeout(()=>{
+                            setNotMessageVisible(false);
+                        }, 3000);
+                    }
+                }
+            }
+         
         });
         
     }

@@ -4,8 +4,8 @@ function NotificationDisplay() {
     const {notification} = useNotificationStore(state=>state);
     return (
         <div className="notification">
-            <p>{notification.user} left a review:</p>
-            <p>{notification.review}</p>
+            <p>{notification.user}: </p>
+            <p>{notification.message}</p>
         </div>
     );
 }

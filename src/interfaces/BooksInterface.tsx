@@ -9,4 +9,13 @@ export interface Book{
 }
 
 
+export interface DirtyBook{
+    ID: string,
+    title: string,
+    author: string,
+    language: string,
+    year: number,
+    existed: boolean,
+    deleted: boolean
+}
 

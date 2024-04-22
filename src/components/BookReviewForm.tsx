@@ -5,6 +5,7 @@ import useBookReviewStore from "../store/bookReviewStore";
 import { Link, useParams } from "react-router-dom";
 import useBookStore from "../store/bookStore";
 import MultiLineInputTemplate from "./MultiLineInputTemplate";
+const uuid = require('uuid');
 
 
 
@@ -13,7 +14,7 @@ function BookReviewForm(){
     const {bookId} = useParams();
     
     const {getAxiosInstance} = useAxiosStore(state=>state);
-    const {addBookReview} = useBookReviewStore(state=>state);
+    const {addBookReview, addDirtyBookReview} = useBookReviewStore(state=>state);
     const {books} = useBookStore(state=>state);
     const [foundBook] = useState(books.find(b=>b.ID === bookId));
 
@@ -25,6 +26,30 @@ function BookReviewForm(){
     const [visibleNotification, setVisibleNotification] = useState(false);
     const [visibleWarning, setVisibleWarning] = useState("");
     const tryAddReview = () => {
+        if(username.length < 3)
+        {
+            setVisibleWarning("Username must be at least 3 characters long");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
+        if(content.length === 0)
+        {
+            setVisibleWarning("Content must not be blank");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
+        if(isNaN(rating))
+        {
+            setVisibleWarning("Rating must be a number");
+            setTimeout(()=>{
+                setVisibleWarning("");
+            }, 5000);
+            return;
+        }
         getAxiosInstance()
         .post(`${process.env.REACT_APP_BASIC_URL}/reviews`, {rating, content, username, bookId: foundBook?.ID, userId: "fkdslfjsdkflsd"})   
         .then((response)=>{
@@ -53,6 +78,23 @@ function BookReviewForm(){
                 setTimeout(()=>{
                     setVisibleWarning("");
                 }, 5000);
+            }
+            else
+            {
+                addDirtyBookReview({ID: uuid.v4(),rating, content, username, bookId: foundBook!.ID, userId: "fkdslfjsdkflsd"});
+                setRating(NaN);
+                setContent("");
+                setUsername("");
+                setVisibleNotification(true);
+                setTimeout(()=>{
+                    setVisibleNotification(false);
+                }, 3000);
+
+                const fields = document.getElementsByClassName("book-input-field") as HTMLCollection;
+                for(let i = 0 ; i < fields.length; i++)
+                {
+                    (fields[i] as HTMLInputElement).value = "";
+                }
             }
         })
     }
