@@ -6,6 +6,7 @@ import useAxiosStore from './axiosStore';
 
 interface BookReviewState{
     bookReviews: BookReview[];
+    page: number;
     dirtyBookReviews: BookReview[];
     addBookReview: (review: BookReview)=>void;
     addDirtyBookReview: (review: BookReview)=>void;
@@ -13,6 +14,11 @@ interface BookReviewState{
     updateBookReview: (id: string, updatedReview: BookReview)=>void;
     resetDirtyBookReviews: ()=>void;   
     saveDirtyBookReviews: ()=>void;
+    getPage: ()=>number;
+    increasePage: ()=>void;
+    decreasePage: ()=>void;
+    resetPage: ()=>void;
+    setBookReviews: (reviews: BookReview[])=>void;
 }
 
 const useBookReviewStore = create<BookReviewState>()(
@@ -21,8 +27,12 @@ const useBookReviewStore = create<BookReviewState>()(
             {
                 bookReviews: [],
                 dirtyBookReviews: [],
-
-
+                page: 0,
+                setBookReviews: (reviews)=>set({bookReviews: reviews}),
+                resetPage: ()=>set({page: 0}),
+                getPage: ()=>get().page,
+                increasePage: ()=>set({page: get().page + 1}),
+                decreasePage: ()=>set({page: get().page - 1}),
                 addBookReview: (review)=> set({bookReviews: [...get().bookReviews, review]}),
                 addDirtyBookReview: (review)=> set({dirtyBookReviews: [...get().dirtyBookReviews, review]}),
 

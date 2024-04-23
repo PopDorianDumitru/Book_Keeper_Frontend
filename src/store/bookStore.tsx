@@ -82,13 +82,13 @@ const useBookStore = create<BookState>()(
             getBookById: (id: string)=> get().books.find(b=>b.ID === id),
             getDirtyBookById: (id: string)=> get().dirtyBooks.find(b=>b.ID === id),
             syncBooks: ()=>{
-                const {getAxiosInstance} = useAxiosStore.getState();
-                getAxiosInstance().get("/books").then((response)=>{
-                    set({books: response.data});
-                })
-                .catch((error)=>{
-                    console.log("Error in getting books from the server");
-                })
+                // const {getAxiosInstance} = useAxiosStore.getState();
+                // getAxiosInstance().get("/books").then((response)=>{
+                //     set({books: response.data});
+                // })
+                // .catch((error)=>{
+                //     console.log("Error in getting books from the server");
+                // })
             },
 
             resetDirtyBooks: ()=> set({dirtyBooks: []}),

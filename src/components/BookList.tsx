@@ -73,15 +73,16 @@ function BookListDisplay(){
     const loadMoreBooks = ()=>{
         console.log("Was called to load more books!");
         increasePage();
+        console.log(getPage())
         let params = "";
-        sortingFields.forEach((obj)=>{
+        getListSortingFields().forEach((obj)=>{
             params += `${obj.field}=${obj.order}&`;
         });
         getAxiosInstance()
         .get(`${process.env.REACT_APP_BASIC_URL}/books?page=${getPage()}&${params}`)
         .then((response)=>{
             console.log(response.data);
-            if(response.data.length == 0)
+            if(response.data.length === 0)
                 decreasePage();
             const newBooks = response.data.filter(
                 (newBook:Book) => !getBooks().some((existingBook) => existingBook.ID === newBook.ID)

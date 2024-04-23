@@ -52,12 +52,12 @@ function WebsiteWrapper(){
                     }, 3000);
                 };
             }  
-            getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/books`).then((response)=>{
-                setBooks(response.data);
-            }).catch((error)=>{
-                console.log(error);
-                console.log("Error in fetching books from the server");
-            });
+            // getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/books`).then((response)=>{
+            //     setBooks(response.data);
+            // }).catch((error)=>{
+            //     console.log(error);
+            //     console.log("Error in fetching books from the server");
+            // });
             
             console.log("Entered already existing books");
             setFromStart(false);

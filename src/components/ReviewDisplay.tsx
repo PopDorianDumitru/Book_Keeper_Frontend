@@ -1,10 +1,11 @@
 import { BookReview } from "../interfaces/BookReviewInterface";
 import '../css/ReviewDisplay.css'
-function ReviewDisplay({bookReview}: {bookReview: BookReview})
+import { ForwardedRef, forwardRef } from "react";
+function ReviewDisplay({bookReview, ref}: {bookReview: BookReview, ref:React.ForwardedRef<unknown>})
 {
 
     return (
-        <div className="review-display">
+        <div ref={ref as ForwardedRef<HTMLDivElement>} className="review-display">
             <h2>{bookReview.username}</h2>
             <h3> Rating: {bookReview.rating}</h3>
             <pre>{bookReview.content}</pre>
@@ -12,4 +13,8 @@ function ReviewDisplay({bookReview}: {bookReview: BookReview})
     )
 }
 
-export default ReviewDisplay;
+const ReviewDisplayComponent = forwardRef(({bookReview} : {bookReview: BookReview}, ref)=>{
+    return ReviewDisplay({bookReview, ref});
+})
+
+export default ReviewDisplayComponent;
