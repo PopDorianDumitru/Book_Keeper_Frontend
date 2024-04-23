@@ -5,23 +5,41 @@ import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
 import NotificationDisplay from './NotificationDisplay';
 import useNotificationStore from '../store/notificationStore';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Book } from '../interfaces/BooksInterface';
 function BookListDisplay(){
-    const [sortingFields, setSortingFields] = useState<{field: string, order: string}[]>([]);
-    const [sortingLabel, setSortingLabel] = useState("None");
+    const {setNotification, removeNotification} = useNotificationStore(state=>state);
+    const {getPage, increasePage, getListSortingFields, toggleSortingFields, resetSortingFields, resetPage, decreasePage} = useBookStore(state=>state);
+    const [sortingFields, setSortingFields] = useState<{field: string, order: string}[]>(getListSortingFields());
+    const [sortingLabel, setSortingLabel] = useState(getListSortingFields().length === 0 ? "None" : sortingFields.reduce((acc, obj)=>acc + obj.field + " " + obj.order + ", ", "").slice(0, -2));
+    const parentRef = useRef<HTMLDivElement>(null);
     useEffect(()=>{
         let params = "";
         sortingFields.forEach((obj)=>{
             params += `${obj.field}=${obj.order}&`;
         });
         console.log(params);
+        resetPage();
         getAxiosInstance()
-        .get(`${process.env.REACT_APP_BASIC_URL}/books?${params}`)
+        .get(`${process.env.REACT_APP_BASIC_URL}/books?page=${getPage()}&${params}`)
         .then((response)=>{
             console.log(response.data);
-            setBooks(response.data);
-            setAvailableBooks(response.data);
+            if(getPage() === 0)
+                setBooks(response.data);
+            else{
+                    const newBooks = response.data.filter(
+                        (newBook:Book) => !getBooks().some((existingBook) => existingBook.ID === newBook.ID)
+                    );
+                    setBooks([...getBooks(), ...newBooks]);
+            }
+            const dirty:Book[] = getDirtyBooks().filter(bk=>!bk.deleted).map(bk=>({
+                ID: bk.ID,
+                title: bk.title,
+                author: bk.author,
+                language: bk.language,
+                year: bk.year
+            }))
+            setAvailableBooks([...getBooks(), ...dirty]);
         })
         .catch((err)=>{
             if(err.code === "ERR_NETWORK")
@@ -51,6 +69,40 @@ function BookListDisplay(){
         }))
         ])
     }
+
+    const loadMoreBooks = ()=>{
+        console.log("Was called to load more books!");
+        increasePage();
+        console.log(getPage())
+        let params = "";
+        getListSortingFields().forEach((obj)=>{
+            params += `${obj.field}=${obj.order}&`;
+        });
+        getAxiosInstance()
+        .get(`${process.env.REACT_APP_BASIC_URL}/books?page=${getPage()}&${params}`)
+        .then((response)=>{
+            console.log(response.data);
+            if(response.data.length === 0)
+                decreasePage();
+            const newBooks = response.data.filter(
+                (newBook:Book) => !getBooks().some((existingBook) => existingBook.ID === newBook.ID)
+            );
+            setBooks([...getBooks(), ...newBooks]);
+            const dirty:Book[] = getDirtyBooks().filter(bk=>!bk.deleted).map(bk=>({
+                ID: bk.ID,
+                title: bk.title,
+                author: bk.author,
+                language: bk.language,
+                year: bk.year
+            }))
+            setAvailableBooks([...getBooks(), ...dirty]);
+        })
+        .catch((error)=>{
+            setNotification({message:"Can't load more books, backend is down", user:"System:"});
+            setTimeout(()=>removeNotification(), 3000)
+        })
+    }
+
     const {visible}= useNotificationStore(state=>state);
     const [availableBooks, setAvailableBooks] = useState<Book[]>([]);
     const {getDirtyBooks, getBooks,setBooks, deleteCheckmarkedBooks, checkmarkedBooks} = useBookStore(state=>state);
@@ -75,9 +127,11 @@ function BookListDisplay(){
             const newFields = [...sortingFields];
             newFields[index].order = order;
             setSortingFields(newFields);
+            toggleSortingFields(field, order);
         }
         else
         {
+            toggleSortingFields(field, order);
             setSortingFields([...sortingFields, {field, order}])
         }
     }
@@ -109,15 +163,35 @@ function BookListDisplay(){
             (inputs[i] as HTMLInputElement).checked = false;
         }
         setSortingFields([]);
+        resetSortingFields();
         console.log("I am here");
     }
+
+
+    const observer = useRef<IntersectionObserver | null>(null);
+    const lastBookElementRef = useCallback((node: Element) => {
+        if (observer.current) observer.current.disconnect();
+            observer.current = new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting) {
+                    loadMoreBooks();
+                }
+            });
+        if (node) observer.current.observe(node);
+    }, []);
+
+
 
     return(
         <div className="book-list-page">
             <div className='book-list'>
-                <div className="book-list-form">
+                <div ref={parentRef} className="book-list-form">
                     {
-                        availableBooks.length !== 0?  availableBooks.map(book => <SimpleBookDisplay key={book["ID"]} ID={book["ID"]} title={book["title"]} author={book["author"]} language={book["language"]} year={book["year"]} updateAvailableBooks={updateAvailableBooks} />)
+                        availableBooks.length !== 0?  availableBooks.map((book, index) => {
+                            if(availableBooks.length === index + 1)
+                                return <SimpleBookDisplay ref={lastBookElementRef} loadMoreBooks={loadMoreBooks} key={book["ID"]} ID={book["ID"]} title={book["title"]} author={book["author"]} language={book["language"]} year={book["year"]} updateAvailableBooks={updateAvailableBooks} />
+                            else
+                                return <SimpleBookDisplay loadMoreBooks={loadMoreBooks} key={book["ID"]} ID={book["ID"]} title={book["title"]} author={book["author"]} language={book["language"]} year={book["year"]} updateAvailableBooks={updateAvailableBooks} />
+                        })
                                             :  <h2>No books added</h2>
                     }
                 </div>
@@ -126,25 +200,24 @@ function BookListDisplay(){
                     <label htmlFor='sortByTitle'>Sort by title</label>
                     <div id="sortByTitle">
                         <label htmlFor='title-asc'>Ascending</label>
-                        <input onChange={sortByFields} name='title-sort' type='radio' id="title-ASC"></input>
+                        <input checked={sortingFields.find(f => f.field === 'title')?.order === 'ASC'} onChange={(ev)=>{resetPage();sortByFields(ev);}} name='title-sort' type='radio' id="title-ASC"></input>
                         <label htmlFor='title-desc'>Descending</label>
-                        <input onChange={sortByFields} name='title-sort' type='radio' id="title-DESC"></input>
+                        <input checked={sortingFields.find(f => f.field === 'title')?.order === 'DESC'} onChange={(ev)=>{resetPage();sortByFields(ev);}} name='title-sort' type='radio' id="title-DESC"></input>
                     </div>
                     <label htmlFor='sortByAuthor'>Sort by author</label>
                     <div id='sortByAuthor'>
                         <label htmlFor='author-asc'>Ascending</label>
-                        <input onChange={sortByFields} name='author-sort' type='radio' id="author-ASC"></input>
+                        <input checked={sortingFields.find(f => f.field === 'author')?.order === 'ASC'} onChange={(ev)=>{resetPage();sortByFields(ev);}} name='author-sort' type='radio' id="author-ASC"></input>
                         <label htmlFor='author-desc'>Descending</label>
-                        <input onChange={sortByFields} name='author-sort' type='radio' id="author-DESC"></input>
+                        <input checked={sortingFields.find(f => f.field === 'author')?.order === 'DESC'} onChange={(ev)=>{resetPage();sortByFields(ev);}} name='author-sort' type='radio' id="author-DESC"></input>
                     </div>
                     <p>Elements currently sorted in the following way: {sortingLabel}</p>
+                    <button onClick={exportToJSON}>Save to JSON</button>
+                    <button onClick={removeCheckmarkedBooks}>Delete all selected books</button>    
+                    <Link to={"/add"} className="page-link">Add books</Link>
+                    {visible && <NotificationDisplay /> }
                 </div>
             </div>
-           
-            <button onClick={exportToJSON}>Save to JSON</button>
-            <button onClick={removeCheckmarkedBooks}>Delete all selected books</button>    
-            <Link to={"/add"} className="page-link">Add books</Link>
-            {visible && <NotificationDisplay /> }
         </div>
     )    
 }

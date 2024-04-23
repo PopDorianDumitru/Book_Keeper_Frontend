@@ -10,6 +10,7 @@ interface BookReview{
 
 interface BookState{
     books: Book[];
+    page: number;
     dirtyBooks: DirtyBook[];
     bookReviews: BookReview[];
     checkmarkedBooks: string[];
@@ -33,6 +34,14 @@ interface BookState{
     getBooks: ()=>Book[];
     getDirtyBooks: ()=>DirtyBook[];
     setDirtyBookById: (ID: string,dirtyBooks: DirtyBook)=>void;
+    increasePage: ()=>void;
+    decreasePage: ()=>void;
+    resetPage: ()=>void;
+    getPage: ()=>number;
+    listSortingFields: {field: string, order: string}[];
+    toggleSortingFields: (field: string, order: string)=>void;
+    resetSortingFields: ()=>void;
+    getListSortingFields: ()=>{field: string, order: string}[];
 }   
 
 const useBookStore = create<BookState>()(
@@ -41,6 +50,30 @@ const useBookStore = create<BookState>()(
             books: [],
             bookReviews: [],
             sortingFields:[],
+            page: 0,
+            listSortingFields: [],
+            decreasePage: ()=>set({page: get().page - 1}),
+            resetPage: ()=>set({page: 0}),
+            getListSortingFields: ()=> get().listSortingFields,
+            toggleSortingFields: (field, order)=>{
+                const {listSortingFields} = get();
+                if(listSortingFields.findIndex((obj)=>obj.field === field) !== -1)
+                {
+                    set({listSortingFields: listSortingFields.map((obj)=>{
+                        if(obj.field === field)
+                            return {field, order};
+                        return obj;
+                    })})
+                }
+                else{
+                    set({listSortingFields: [...listSortingFields, {field, order}]})
+                }
+            },
+            resetSortingFields: ()=> set({listSortingFields: []}),
+
+
+            increasePage: ()=> set({page: get().page + 1}),
+            getPage: ()=> get().page,
             dirtyBooks: [],
             getBooks: ()=> get().books,
             getDirtyBooks: ()=> get().dirtyBooks,
@@ -49,13 +82,13 @@ const useBookStore = create<BookState>()(
             getBookById: (id: string)=> get().books.find(b=>b.ID === id),
             getDirtyBookById: (id: string)=> get().dirtyBooks.find(b=>b.ID === id),
             syncBooks: ()=>{
-                const {getAxiosInstance} = useAxiosStore.getState();
-                getAxiosInstance().get("/books").then((response)=>{
-                    set({books: response.data});
-                })
-                .catch((error)=>{
-                    console.log("Error in getting books from the server");
-                })
+                // const {getAxiosInstance} = useAxiosStore.getState();
+                // getAxiosInstance().get("/books").then((response)=>{
+                //     set({books: response.data});
+                // })
+                // .catch((error)=>{
+                //     console.log("Error in getting books from the server");
+                // })
             },
 
             resetDirtyBooks: ()=> set({dirtyBooks: []}),

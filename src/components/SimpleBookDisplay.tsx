@@ -1,10 +1,12 @@
 import {Book} from "../interfaces/BooksInterface";
 import '../css/BookListDisplay.css'
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { ForwardedRef,  forwardRef, useState } from "react";
 import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
-function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBooks}:Book&{updateAvailableBooks:()=>void}){
+function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBooks, loadMoreBooks, ref}:Book&{updateAvailableBooks:()=>void, loadMoreBooks:()=>void, ref:React.ForwardedRef<unknown>}){
+    
+
 
     const {addCheckmarkedBook, setDirtyBookById, removeCheckmarkedBook, removeBook, getBookById, getDirtyBookById, addDirtyBook} = useBookStore((state)=>state);
     const [warningMessage, setVisibleWarning] = useState("");
@@ -48,9 +50,10 @@ function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBook
         }
     }
 
+    
 
     return (
-        <div className="book-display book-display-list">
+        <div ref={ref as ForwardedRef<HTMLDivElement>}  className="book-display book-display-list">
             <p>Title: {title}</p>
             <p>Author: {author}</p>
             <button onClick={()=>{deleteBook(ID)}}>Remove Book</button>
@@ -70,5 +73,8 @@ function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBook
     )
 }
 
+const SimpleBookDisplayComponent = forwardRef(({ID, title, author, language,year,updateAvailableBooks, loadMoreBooks}:Book&{updateAvailableBooks:()=>void, loadMoreBooks:()=>void}, ref)=>{
+    return SimpleBookDisplay({ID, title, author, language, year, updateAvailableBooks,loadMoreBooks, ref});
+})
 
-export default SimpleBookDisplay
+export default SimpleBookDisplayComponent

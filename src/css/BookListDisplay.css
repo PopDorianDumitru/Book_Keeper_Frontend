@@ -26,3 +26,9 @@
     margin: 0.2em;
 }
 
+
+.review-box{
+    max-height: 50vh;
+    overflow: auto;
+    margin-top: 1em;
+}
