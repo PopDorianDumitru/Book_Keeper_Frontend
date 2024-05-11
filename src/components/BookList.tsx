@@ -3,7 +3,6 @@ import { Link} from "react-router-dom";
 import SimpleBookDisplay from "./SimpleBookDisplay"; 
 import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
-import NotificationDisplay from './NotificationDisplay';
 import useNotificationStore from '../store/notificationStore';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Book } from '../interfaces/BooksInterface';
@@ -42,6 +41,8 @@ function BookListDisplay(){
             setAvailableBooks([...getBooks(), ...dirty]);
         })
         .catch((err)=>{
+            if(err.response.status === 401)
+                return;
             if(err.code === "ERR_NETWORK")
             {
                 const dirty:Book[] = getDirtyBooks().filter(bk=>!bk.deleted).map(bk=>({
@@ -98,12 +99,13 @@ function BookListDisplay(){
             setAvailableBooks([...getBooks(), ...dirty]);
         })
         .catch((error)=>{
-            setNotification({message:"Can't load more books, backend is down", user:"System:"});
+            if(error.response.status === 401)
+                return;
+            setNotification({message:"Can't load more books, backend is down", user:"System"});
             setTimeout(()=>removeNotification(), 3000)
         })
     }
 
-    const {visible}= useNotificationStore(state=>state);
     const [availableBooks, setAvailableBooks] = useState<Book[]>([]);
     const {getDirtyBooks, getBooks,setBooks, deleteCheckmarkedBooks, checkmarkedBooks} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
@@ -136,20 +138,25 @@ function BookListDisplay(){
         }
     }
 
-    const removeCheckmarkedBooks = ()=>{
+    const removeCheckmarkedBooks = async ()=>{
         if(window.confirm("Are you sure you want to delete all selected books?")){
             try{
-                checkmarkedBooks.forEach((ID:string)=>{
-                    getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`).catch((error)=>{
+                let deletedBooks = 0;
+                await Promise.all(checkmarkedBooks.map(async (ID:string)=>{
+                    await getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`).then(()=>deletedBooks+=1).catch((error)=>{
+                        if(error.response.status === 401)
+                            return;
                         window.alert("Error in deleting books:" + error.message);
                     })
-                    ;
-                });
-                window.alert("Deleted all boks");
-                setAvailableBooks([...(availableBooks.filter((book)=>{
-                    return checkmarkedBooks.findIndex((b)=>b === book.ID) === -1;
-                }))]);
-                deleteCheckmarkedBooks();
+                    
+                }));
+                if(deletedBooks === checkmarkedBooks.length){
+                    window.alert("Deleted all books");
+                    setAvailableBooks([...(availableBooks.filter((book)=>{
+                        return checkmarkedBooks.findIndex((b)=>b === book.ID) === -1;
+                    }))]);
+                    deleteCheckmarkedBooks();
+                }
                 
             }catch(error){
                 window.alert("Error in deleting books:" + error);
@@ -215,7 +222,7 @@ function BookListDisplay(){
                     <button onClick={exportToJSON}>Save to JSON</button>
                     <button onClick={removeCheckmarkedBooks}>Delete all selected books</button>    
                     <Link to={"/add"} className="page-link">Add books</Link>
-                    {visible && <NotificationDisplay /> }
+                    
                 </div>
             </div>
         </div>

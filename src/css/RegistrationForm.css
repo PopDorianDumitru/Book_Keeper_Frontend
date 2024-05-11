@@ -1,0 +1,19 @@
+.registration-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgb(255, 210, 126);
+    padding: 1rem;
+    border-radius: 1rem;
+    width:max-content;
+}
+
+.registration-form button{
+    width: 100%;
+}
+
+.registration-form .error-message{
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
