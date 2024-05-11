@@ -1,11 +1,15 @@
 import '../css/Notification.css'
 import useNotificationStore from '../store/notificationStore';
-function NotificationDisplay() {
-    const {notification} = useNotificationStore(state=>state);
+const NotificationDisplay = () => {
+    const {visible, notification} = useNotificationStore(state=>state);
     return (
-        <div className="notification">
-            <p>{notification.user}: </p>
-            <p>{notification.message}</p>
+        <div>
+            {   visible &&
+                <div className="notification">
+                    <p>{notification.user}: </p>
+                    <p>{notification.message}</p>
+                </div>
+            }
         </div>
     );
 }

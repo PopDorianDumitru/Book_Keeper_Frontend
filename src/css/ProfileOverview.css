@@ -1,0 +1,19 @@
+.profile-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color:rgb(253, 196, 91);
+    padding: 1rem;
+    border-radius: 1rem;
+    width:max-content;
+}
+
+.profile-details{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.profile-details button{
+    width: 100%;
+}

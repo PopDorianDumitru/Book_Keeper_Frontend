@@ -20,13 +20,15 @@ function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBook
                 window.alert("Book has been deleted");
             })
             .catch((error)=>{
+                if(error.response.status === 401)
+                    return;
                 if(error.code !== "ERR_NETWORK"){
                     setVisibleWarning("Umnable to delete book. Error: " + error.message);
                     setTimeout(()=>{
                         setVisibleWarning("");
                     }, 5000);
                 }
-                else{
+                if(error.code === "ERR_NETWORK"){
                     //Either the book is dirty or not dirty
                     const goodBook = getBookById(ID);
                     if(goodBook !== undefined)

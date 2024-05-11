@@ -24,17 +24,21 @@ function BookDisplay({ID, title, author, language,year}:Book){
             setBookReviews([...response.data]);
         })
         .catch((error)=>{
+            if(error.response.status === 401)
+                return;
             console.log("Error: " + error);
         })
 
         getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/reviews/book/${ID}/rating`)
         .then(response=>{
             console.log("Entered rating");
-            console.log(response.data)
-            setRating(response.data);
+            console.log(response.data.rating)
+            setRating(response.data.rating);
         
         })
         .catch(error=>{
+            if(error.response.status === 401)
+                return;
             console.log("Error in getting rating");
             setRating("unknown");
         })
@@ -56,6 +60,8 @@ function BookDisplay({ID, title, author, language,year}:Book){
                     setUpdate(update=>update+1)
                 })
                 .catch((error)=>{
+                    if(error.response.status === 401)
+                        return;
                     console.log("Error: " + error);
                 })
             }})

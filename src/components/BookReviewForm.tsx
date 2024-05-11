@@ -5,6 +5,7 @@ import useBookReviewStore from "../store/bookReviewStore";
 import { Link, useParams } from "react-router-dom";
 import useBookStore from "../store/bookStore";
 import MultiLineInputTemplate from "./MultiLineInputTemplate";
+import useUserStore from "../store/userStore";
 const uuid = require('uuid');
 
 
@@ -17,23 +18,14 @@ function BookReviewForm(){
     const {addBookReview, addDirtyBookReview} = useBookReviewStore(state=>state);
     const {books} = useBookStore(state=>state);
     const [foundBook] = useState(books.find(b=>b.ID === bookId));
-
+    const {getUser} = useUserStore(state=>state);
 
 
     const [rating, setRating] = useState(NaN);
     const [content, setContent] = useState("");
-    const [username, setUsername] = useState("");
     const [visibleNotification, setVisibleNotification] = useState(false);
     const [visibleWarning, setVisibleWarning] = useState("");
     const tryAddReview = () => {
-        if(username.length < 3)
-        {
-            setVisibleWarning("Username must be at least 3 characters long");
-            setTimeout(()=>{
-                setVisibleWarning("");
-            }, 5000);
-            return;
-        }
         if(content.length === 0)
         {
             setVisibleWarning("Content must not be blank");
@@ -51,8 +43,9 @@ function BookReviewForm(){
             return;
         }
         getAxiosInstance()
-        .post(`${process.env.REACT_APP_BASIC_URL}/reviews`, {rating, content, username, bookId: foundBook?.ID, userId: "fkdslfjsdkflsd"})   
+        .post(`${process.env.REACT_APP_BASIC_URL}/reviews`, {rating, content, username: getUser()?.username, bookId: foundBook?.ID, userId: "fkdslfjsdkflsd"})   
         .then((response)=>{
+            
             if(response !== undefined)
             {
                 addBookReview(response.data);
@@ -63,7 +56,6 @@ function BookReviewForm(){
 
                 setRating(NaN);
                 setContent("");
-                setUsername("");
                 const fields = document.getElementsByClassName("book-input-field") as HTMLCollection;
                 for(let i = 0 ; i < fields.length; i++)
                 {
@@ -73,6 +65,8 @@ function BookReviewForm(){
             }
         })
         .catch((error)=>{
+            if(error.response.status === 401)
+                return;
             if(error.code !== "ERR_NETWORK"){
                 setVisibleWarning(error.response.data);
                 setTimeout(()=>{
@@ -81,10 +75,9 @@ function BookReviewForm(){
             }
             else
             {
-                addDirtyBookReview({ID: uuid.v4(),rating, content, username, bookId: foundBook!.ID, userId: "fkdslfjsdkflsd"});
+                addDirtyBookReview({ID: uuid.v4(),rating, content, username: getUser()?.username as string, bookId: foundBook!.ID, userId: "fkdslfjsdkflsd"});
                 setRating(NaN);
                 setContent("");
-                setUsername("");
                 setVisibleNotification(true);
                 setTimeout(()=>{
                     setVisibleNotification(false);
@@ -105,7 +98,6 @@ function BookReviewForm(){
             {
                 foundBook ?
                 <div className="form-template">
-                    <InputTemplate id="username" placeHolderText="Enter username" type="text" label="Username " change={(value:string)=>{setUsername(value)}} />
                     <InputTemplate id="rating" placeHolderText="Enter rating" type="number" label="Rating " change={(value:string)=>{setRating(Number.parseInt(value))}} />
                     <MultiLineInputTemplate id="content" placeHolderText="Enter content" label="Content " change={(value:string)=>{setContent(value)}} />
 

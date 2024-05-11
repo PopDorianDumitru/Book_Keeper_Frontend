@@ -9,6 +9,16 @@ import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
 import useNotificationStore from "../store/notificationStore";
 import BookReviewForm from "./BookReviewForm";
+import LeftNavBar from "./LeftNavBar";
+import RegistrationForm from "./RegistrationForm";
+import LogInForm from "./LoginForm";
+import NotificationDisplay from "./NotificationDisplay";
+import WarningDisplay from "./WarningDisplay";
+import SuccessDisplay from "./SuccessDisplay";
+import ProfileOverview from "./ProfileOverview";
+import useUserStore from "../store/userStore";
+import LogOutConfirmation from "./LogOutConfirmation";
+import VerifyingPage from "./VerifyingPage";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -17,11 +27,13 @@ This component is necessary if I don't store the elements in a database or a fil
 
 function WebsiteWrapper(){
     const socketInstance = useRef<WebSocket>();
+    const {visibleSuccess, visibleWarning, visible} = useNotificationStore(state=>state);
     // const [books, setBooks] = useState<Book[]>([]);
     // const [checkmarkedBooks, setCheckmarkedBooks] = useState<string[]>([]);
     const {setBooks, addBookReview} = useBookStore(state=>state);
     const [fromStart, setFromStart] = useState<Boolean>(true);
     const {getAxiosInstance} = useAxiosStore(state=>state);
+    const {visibleLogOutForm} = useUserStore(state=>state);
     const {setNotification, removeNotification} = useNotificationStore(state=>state);
     // const addBook = (book : Book)=>{
     //     console.log("Adding a book");
@@ -38,15 +50,16 @@ function WebsiteWrapper(){
     
     useEffect(()=>{
         if(fromStart){
-            removeNotification();
             if(!socketInstance.current){
             
                 const ws = new WebSocket(`${process.env.REACT_APP_SOCKET_URL}`);
                 socketInstance.current = ws;
                 socketInstance.current.onmessage = (ev)=>{
                     const data = JSON.parse(ev.data);
+                    const notification = {user: data.user, message: data.review};
                     addBookReview(data);
-                    setNotification(data);
+                    setNotification(notification);
+                    console.log(notification)
                     setTimeout(()=>{
                         removeNotification();
                     }, 3000);
@@ -150,13 +163,34 @@ function WebsiteWrapper(){
 
     return (
         <BrowserRouter>
+            <LeftNavBar></LeftNavBar>
             <Routes>
+                <Route path="/profile" element={<ProfileOverview></ProfileOverview>}></Route>
                 <Route path="/add" element={<MainPage></MainPage>}></Route>        
                 <Route path="/" element={<BookListDisplay></BookListDisplay>}></Route>
                 <Route path="/book/:id" element={<IndividualBook ></IndividualBook> }></Route>
                 <Route path="/book/details/:id" element={<BookDisplayWrapper></BookDisplayWrapper>}></Route>
                 <Route path="/review/:bookId" element={<BookReviewForm></BookReviewForm>}></Route>
+                <Route path="/registration" element={<RegistrationForm></RegistrationForm>}></Route>
+                <Route path="/login" element={<LogInForm></LogInForm>}></Route>
+                <Route path="/verify" element={<VerifyingPage></VerifyingPage>}></Route>
             </Routes>
+            {
+                visible &&
+                <NotificationDisplay></NotificationDisplay>
+            }
+            {
+                visibleWarning &&
+                <WarningDisplay></WarningDisplay>
+            }
+            {
+                visibleSuccess &&
+                <SuccessDisplay></SuccessDisplay>
+            }
+            {
+                visibleLogOutForm &&
+                <LogOutConfirmation></LogOutConfirmation>
+            }
         </BrowserRouter>
     )
 

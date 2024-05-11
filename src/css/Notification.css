@@ -14,3 +14,54 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     animation: slideIn 0.5s forwards, slideOut 0.5s forwards 2.5s;
 }
+
+@keyframes slideIn{
+    from{
+        transform: translateX(105%);
+    }
+    to{
+        transform: translateX(0);
+    }
+    
+}
+@keyframes slideOut{
+    from{
+        transform: translateX(0);
+    }
+    to{
+        transform: translateX(105%);
+    }
+    
+}
+
+.warning{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1002;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color:rgb(255, 69, 69);
+    color: white;
+    font-size: 1.2em;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    animation: slideIn 0.5s forwards, slideOut 0.5s forwards 3s;
+    animation-timing-function: ease-in;
+}
+
+.success{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1001;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color:rgb(117, 216, 87);
+    color: white;
+    font-size: 1.2em;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    animation: slideIn 0.5s forwards, slideOut 0.5s forwards 3s;
+    animation-timing-function: ease-in;
+}

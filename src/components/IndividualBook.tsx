@@ -75,6 +75,8 @@ function IndividualBook(){
                 setNotMessageVisible(false);
             }, 3000);
         }).catch((error)=>{
+            if(error.response.status === 401)
+                return;
             if(error.code !== "ERR_NETWORK"){
                 setVisibleWarning("Unable to update book. Error: " + error.response.data);
                 setTimeout(()=>{
