@@ -16,7 +16,7 @@ const ProfileOverview = () => {
             console.log(response.data)
         })
         .catch((err:any)=>{
-            if(err.response.status === 401)
+            if(err.code !== "ERR_NETWORK" &&err.response.status === 401)
                 return;
             setUser(null);
         });
@@ -35,13 +35,21 @@ const ProfileOverview = () => {
         })
         .catch((error)=>{
             console.log(error);
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
+            if(error.code === "ERR_NETWORK")
+            {
+                setWarning({message: "Network error. Please try again later."});
+                setTimeout(()=>{
+                    removeWarning();
+                }, 4000);
+                return;
+            }
             setWarning({message: error.response.data});
             setTimeout(()=>{
                 removeWarning();
             }, 4000);
-            
+
         });
     }
 

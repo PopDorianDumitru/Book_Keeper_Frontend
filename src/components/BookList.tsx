@@ -41,7 +41,7 @@ function BookListDisplay(){
             setAvailableBooks([...getBooks(), ...dirty]);
         })
         .catch((err)=>{
-            if(err.response.status === 401)
+            if(err.code !== "ERR_NETWORK" && err.response.status === 401)
                 return;
             if(err.code === "ERR_NETWORK")
             {
@@ -55,6 +55,7 @@ function BookListDisplay(){
                 console.log(dirty);
                 setAvailableBooks([...getBooks(), ...dirty]);
             }
+            
         })
         setSortingLabel(sortingFields.length === 0 ? "None" : sortingFields.reduce((acc, obj)=>acc + obj.field + " " + obj.order + ", ", "").slice(0, -2));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,7 +100,7 @@ function BookListDisplay(){
             setAvailableBooks([...getBooks(), ...dirty]);
         })
         .catch((error)=>{
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" && error.response.status === 401)
                 return;
             setNotification({message:"Can't load more books, backend is down", user:"System"});
             setTimeout(()=>removeNotification(), 3000)
@@ -144,7 +145,7 @@ function BookListDisplay(){
                 let deletedBooks = 0;
                 await Promise.all(checkmarkedBooks.map(async (ID:string)=>{
                     await getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`).then(()=>deletedBooks+=1).catch((error)=>{
-                        if(error.response.status === 401)
+                        if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                             return;
                         window.alert("Error in deleting books:" + error.message);
                     })

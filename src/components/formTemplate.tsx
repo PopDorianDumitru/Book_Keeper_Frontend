@@ -67,7 +67,7 @@ function BookForm(){
             }, 3000);
         })
         .catch((error)=>{
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
             if(error.code !== "ERR_NETWORK"){
                 setVisibleWarning(error.response.data);
