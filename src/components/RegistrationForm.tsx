@@ -47,9 +47,16 @@ const RegistrationForm = () => {
 
                 })
                 .catch((error)=>{
-                    if(error.response.status === 401)
+                    if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                         return;
-
+                    if(error.code === "ERR_NETWORK")
+                    {
+                        setWarning({message: "Network error. Please try again later."});
+                        setTimeout(()=>{
+                            removeWarning();
+                        }, 4000);
+                        return;
+                    }
                     setWarning({message: error.response.data});
                     setTimeout(()=>{
                         removeWarning();

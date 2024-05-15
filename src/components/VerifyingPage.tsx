@@ -27,14 +27,22 @@ const VerifyingPage = () => {
         })
         .catch((error)=>{
             setVerified(false);
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
-            if(error.response.status === 404)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 404)
             {
                 setWarning({message: error.response.data.message});
                 setTimeout(()=>{
                     removeWarning();
                     nav("/registration")
+                }, 4000);
+                return;
+            }
+            if(error.code === "ERR_NETWORK")
+            {
+                setWarning({message: "Network error. Please try again later."});
+                setTimeout(()=>{
+                    removeWarning();
                 }, 4000);
                 return;
             }

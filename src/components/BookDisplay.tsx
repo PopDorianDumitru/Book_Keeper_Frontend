@@ -12,7 +12,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
     const [update, setUpdate] = useState(0); // add this line
     const [rating, setRating] = useState<string | number>("calculating...");
     const parentRef = useRef<HTMLDivElement>(null);
-    const {getPage,increasePage,bookReviews,addBookReview,setBookReviews,resetPage} = useBookReviewStore.getState();
+    const {getPage,increasePage,bookReviews,setBookReviews,resetPage} = useBookReviewStore.getState();
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const [displayReviews, setDisplayReviews] = useState(false);
     useEffect(()=>{
@@ -24,7 +24,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
             setBookReviews([...response.data]);
         })
         .catch((error)=>{
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
             console.log("Error: " + error);
         })
@@ -37,7 +37,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
         
         })
         .catch(error=>{
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
             console.log("Error in getting rating");
             setRating("unknown");
@@ -60,7 +60,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
                     setUpdate(update=>update+1)
                 })
                 .catch((error)=>{
-                    if(error.response.status === 401)
+                    if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                         return;
                     console.log("Error: " + error);
                 })

@@ -6,7 +6,6 @@ import BookListDisplay from "./BookList";
 import IndividualBook from "./IndividualBook";
 import BookDisplayWrapper from "./BookDisplayWrapper";
 import useBookStore from "../store/bookStore";
-import useAxiosStore from "../store/axiosStore";
 import useNotificationStore from "../store/notificationStore";
 import BookReviewForm from "./BookReviewForm";
 import LeftNavBar from "./LeftNavBar";
@@ -30,9 +29,8 @@ function WebsiteWrapper(){
     const {visibleSuccess, visibleWarning, visible} = useNotificationStore(state=>state);
     // const [books, setBooks] = useState<Book[]>([]);
     // const [checkmarkedBooks, setCheckmarkedBooks] = useState<string[]>([]);
-    const {setBooks, addBookReview} = useBookStore(state=>state);
+    const {addBookReview} = useBookStore(state=>state);
     const [fromStart, setFromStart] = useState<Boolean>(true);
-    const {getAxiosInstance} = useAxiosStore(state=>state);
     const {visibleLogOutForm} = useUserStore(state=>state);
     const {setNotification, removeNotification} = useNotificationStore(state=>state);
     // const addBook = (book : Book)=>{

@@ -27,12 +27,20 @@ const LogInForm = () => {
                     setSecondFactor(true);
                 })
                 .catch((error)=>{
-                    if(error.response.status === 401)
+                    if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                         return;
-                    if(error.response.status === 403)
+                    if(error.code !== "ERR_NETWORK" &&error.response.status === 403)
                     {
                         console.log(error)
                         setWarning({message: error.response.data.message});
+                        setTimeout(()=>{
+                            removeWarning();
+                        }, 4000);
+                        return;
+                    }
+                    if(error.code === "ERR_NETWORK")
+                    {
+                        setWarning({message: "Network error. Please try again later."});
                         setTimeout(()=>{
                             removeWarning();
                         }, 4000);
@@ -60,12 +68,20 @@ const LogInForm = () => {
                 setAccessToken(response.data.token);
             })
         .catch((error)=>{
-            if(error.response.status === 401)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                 return;
-            if(error.response.status === 403)
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 403)
             {
                 console.log(error)
                 setWarning({message: error.response.data.message});
+                setTimeout(()=>{
+                    removeWarning();
+                }, 4000);
+                return;
+            }
+            if(error.code === "ERR_NETWORK")
+            {
+                setWarning({message: "Network error. Please try again later."});
                 setTimeout(()=>{
                     removeWarning();
                 }, 4000);

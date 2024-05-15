@@ -1,0 +1,10 @@
+version: '3'
+services:
+  frontend:
+    build: .
+    environment:
+      REACT_APP_SERVER_PORT: ${REACT_APP_SERVER_PORT}
+      REACT_APP_BASIC_URL: "${REACT_APP_BASIC_URL}"
+      REACT_APP_SOCKET_URL: "${REACT_APP_SOCKET_URL}"
+    ports:
+      - "3000:3000"

@@ -20,7 +20,7 @@ function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBook
                 window.alert("Book has been deleted");
             })
             .catch((error)=>{
-                if(error.response.status === 401)
+                if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                     return;
                 if(error.code !== "ERR_NETWORK"){
                     setVisibleWarning("Umnable to delete book. Error: " + error.message);
