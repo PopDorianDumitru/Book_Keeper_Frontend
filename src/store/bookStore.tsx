@@ -42,6 +42,7 @@ interface BookState{
     toggleSortingFields: (field: string, order: string)=>void;
     resetSortingFields: ()=>void;
     getListSortingFields: ()=>{field: string, order: string}[];
+    resetCheckmarkedBooks: () => void;
 }   
 
 const useBookStore = create<BookState>()(
@@ -90,7 +91,7 @@ const useBookStore = create<BookState>()(
                 //     console.log("Error in getting books from the server");
                 // })
             },
-
+            resetCheckmarkedBooks: ()=> set({checkmarkedBooks: []}),
             resetDirtyBooks: ()=> set({dirtyBooks: []}),
             setDirtyBookById: (ID, dirtyBook)=> set({dirtyBooks: get().dirtyBooks.map((book)=>{
                 if(book.ID !== ID)

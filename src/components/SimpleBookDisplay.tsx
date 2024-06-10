@@ -23,7 +23,7 @@ function SimpleBookDisplay({ID, title, author, language,year,updateAvailableBook
                 if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                     return;
                 if(error.code !== "ERR_NETWORK"){
-                    setVisibleWarning("Umnable to delete book. Error: " + error.message);
+                    setVisibleWarning("Unable to delete book. Error: " + error.response.data);
                     setTimeout(()=>{
                         setVisibleWarning("");
                     }, 5000);

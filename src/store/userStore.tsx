@@ -17,6 +17,7 @@ interface UserState{
     showLogOutForm: ()=>void;
     hideLogOutForm: ()=>void;
     setIsConnected: (value: boolean)=>void;
+    getRole: ()=>string | undefined;
 
 }
 
@@ -37,6 +38,7 @@ const useUserStore = create<UserState>()(
             showLogOutForm: ()=> set({visibleLogOutForm: true}),
             hideLogOutForm: ()=> set({visibleLogOutForm: false}),
             setIsConnected: (value: boolean)=> set({isConnected: value}),
+            getRole: ()=> get().user?.role,
         }),
         {
             name: "user-storage",
