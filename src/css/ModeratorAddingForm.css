@@ -1,0 +1,29 @@
+.form-template{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1em;
+    margin-left: 25em;
+    margin-right: 25em;
+    background: rgb(255, 210, 126);
+    padding-bottom: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1rem;
+    border-radius: 1em;
+
+}
+
+
+
+.form-template button{
+    flex-grow: 1;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+h2{
+    margin-bottom: 3rem;
+}

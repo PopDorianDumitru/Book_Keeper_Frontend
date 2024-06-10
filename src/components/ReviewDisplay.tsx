@@ -3,9 +3,8 @@ import '../css/ReviewDisplay.css'
 import { ForwardedRef, forwardRef } from "react";
 function ReviewDisplay({bookReview, ref}: {bookReview: BookReview, ref:React.ForwardedRef<unknown>})
 {
-
     return (
-        <div ref={ref as ForwardedRef<HTMLDivElement>} className="review-display">
+        <div key={bookReview.ID} ref={ref as ForwardedRef<HTMLDivElement> | null} className="review-display">
             <h2>{bookReview.username}</h2>
             <h3> Rating: {bookReview.rating}</h3>
             <pre>{bookReview.content}</pre>

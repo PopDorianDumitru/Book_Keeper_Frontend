@@ -14,6 +14,7 @@ const ProfileOverview = () => {
         .then((response)=>{
             setUser(response.data);
             console.log(response.data)
+            console.log(response.data)
         })
         .catch((err:any)=>{
             if(err.code !== "ERR_NETWORK" &&err.response.status === 401)
@@ -62,6 +63,7 @@ const ProfileOverview = () => {
                     <p>Username: {user?.username}</p>
                     <p>Email: {user?.email}</p>
                     <p>Verified: {user?.verified ? "yes" : "no"}</p>
+                    <p>Role: {user?.role}</p>
                     {user?.verified ? <></> : <button onClick={sendVerificationEmail}>Send verification email</button>}
                 </div>
             }

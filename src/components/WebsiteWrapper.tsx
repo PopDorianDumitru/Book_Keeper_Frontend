@@ -18,6 +18,7 @@ import ProfileOverview from "./ProfileOverview";
 import useUserStore from "../store/userStore";
 import LogOutConfirmation from "./LogOutConfirmation";
 import VerifyingPage from "./VerifyingPage";
+import ModeratorAdditionForm from "./ModeratorAdditionForm";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -172,6 +173,7 @@ function WebsiteWrapper(){
                 <Route path="/registration" element={<RegistrationForm></RegistrationForm>}></Route>
                 <Route path="/login" element={<LogInForm></LogInForm>}></Route>
                 <Route path="/verify" element={<VerifyingPage></VerifyingPage>}></Route>
+                <Route path="/moderator_registration" element={<ModeratorAdditionForm></ModeratorAdditionForm>} />
             </Routes>
             {
                 visible &&

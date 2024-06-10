@@ -13,6 +13,7 @@ function BookListDisplay(){
     const [sortingLabel, setSortingLabel] = useState(getListSortingFields().length === 0 ? "None" : sortingFields.reduce((acc, obj)=>acc + obj.field + " " + obj.order + ", ", "").slice(0, -2));
     const parentRef = useRef<HTMLDivElement>(null);
     useEffect(()=>{
+        resetCheckmarkedBooks();
         let params = "";
         sortingFields.forEach((obj)=>{
             params += `${obj.field}=${obj.order}&`;
@@ -108,7 +109,7 @@ function BookListDisplay(){
     }
 
     const [availableBooks, setAvailableBooks] = useState<Book[]>([]);
-    const {getDirtyBooks, getBooks,setBooks, deleteCheckmarkedBooks, checkmarkedBooks} = useBookStore(state=>state);
+    const {getDirtyBooks, getBooks,setBooks, deleteCheckmarkedBooks, checkmarkedBooks, resetCheckmarkedBooks} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
     function exportToJSON(){
         const blob = new Blob([JSON.stringify(availableBooks)], {type: 'application/json'});
@@ -147,7 +148,7 @@ function BookListDisplay(){
                     await getAxiosInstance().delete(`${process.env.REACT_APP_BASIC_URL}/books/${ID}`).then(()=>deletedBooks+=1).catch((error)=>{
                         if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
                             return;
-                        window.alert("Error in deleting books:" + error.message);
+                        window.alert("Error in deleting books:" + error.response.data);
                     })
                     
                 }));
