@@ -19,6 +19,7 @@ import useUserStore from "../store/userStore";
 import LogOutConfirmation from "./LogOutConfirmation";
 import VerifyingPage from "./VerifyingPage";
 import ModeratorAdditionForm from "./ModeratorAdditionForm";
+import UsersChat from "./UsersChat";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -191,6 +192,7 @@ function WebsiteWrapper(){
                 visibleLogOutForm &&
                 <LogOutConfirmation></LogOutConfirmation>
             }
+            <UsersChat />
         </BrowserRouter>
     )
 
