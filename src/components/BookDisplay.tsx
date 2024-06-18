@@ -6,6 +6,7 @@ import useAxiosStore from "../store/axiosStore";
 import { BookReview } from "../interfaces/BookReviewInterface";
 import ReviewDisplay from "./ReviewDisplay";
 import useBookReviewStore from "../store/bookReviewStore";
+import ChatGptChat from "./ChatGptChat";
 function BookDisplay({ID, title, author, language,year}:Book){
 
     const [rating, setRating] = useState<string | number>("calculating...");
@@ -89,6 +90,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
             <p>Year published: {isNaN(year)? "unknown" : year}</p>
             <p>Average Rating: {rating}</p>
             {/* <button onClick={()=>{deleteBook(ID)}}>Remove Book</button> */}
+            <ChatGptChat bookTitle={title} />
             <Link to={"/book/" + ID} className="page-link">Edit book</Link>
             <Link to={"/review/" + ID} className="page-link">Review book</Link>
             <Link to={"/"} className="page-link">Back to books</Link>
