@@ -1,38 +1,49 @@
 import { Book } from "../interfaces/BooksInterface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import '../css/IndividualBook.css'
 import '../css/BookForm.css'
 import useBookStore from "../store/bookStore";
 import useAxiosStore from "../store/axiosStore";
+import useNotificationStore from "../store/notificationStore";
 function IndividualBook(){
 
     const {books, getBookById, getDirtyBookById, setDirtyBookById, addDirtyBook, removeBook, updateBook} = useBookStore(state=>state);
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const {id} = useParams();
-    let book = books.find(b=>b.ID === id) as Book;
-    if(typeof book == "undefined")
-    {
-        if(id !== undefined)
+    const {setWarning, removeWarning, setSuccess, removeSuccess} = useNotificationStore(state=>state);
+    const [book, setBook] = useState(books.find(b=>b.ID === id) as Book);
+
+    const loadBook = async () => {
+        if(book === undefined || book === null)
         {
-            book = getDirtyBookById(id) as Book;
-            if(typeof book === "undefined")
-            {
-                book = {ID: "", title:"", author:"", language:"", year:-2} as Book;
+            try{
+                const response = await getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/books/${id}`);
+                const newBook = response.data;
+                setBook(newBook);
+                setTitle(newBook.title);
+                setAuthor(newBook.author);
+                setLanguage(newBook.language || "English");
+                setYear(newBook.year);
+
+                ID = newBook.ID;
+            }
+            catch(error){
+                console.log(error);
             }
         }
-        else
-        {
-            book = {ID: "", title:"", author:"", language:"", year:-2} as Book;
-        }
-
     }
+
+    useEffect( () => {
+        loadBook();
+
+    }, [])
     let oldBook = book;
-    let ID = book.ID;
-    const [title, setTitle] = useState(book.title);
-    const [author, setAuthor] = useState(book.author);
-    const [language, setLanguage] = useState(book.language);
-    const [year, setYear] = useState(book.year);
+    let ID = "";
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+    const [language, setLanguage] = useState("");
+    const [year, setYear] = useState(0);
     const [notMessageVisible, setNotMessageVisible] = useState(false);
     const [warningMessage, setVisibleWarning] = useState("");
     const saveChanges = () =>{
@@ -121,6 +132,37 @@ function IndividualBook(){
     }
 
 
+    function addPDF(event: React.MouseEvent): void {
+        event.preventDefault();
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".pdf";
+        fileInput.onchange = (ev: Event) => {
+            const file = (ev.target as HTMLInputElement).files?.item(0);
+            if(file === undefined || file === null)
+                return;
+            const formData = new FormData();
+            formData.append("file", file);
+            getAxiosInstance().post(`${process.env.REACT_APP_BASIC_URL}/upload?id=`+id?.toString(), formData, {headers: {'Content-Type': "multipart/form-data"}} )
+            .then((response)=>{
+                setSuccess({message: "PDF has been uploaded"});
+                setTimeout(()=>{
+                    removeSuccess();
+                }, 4000);
+            })
+            .catch((error)=>{
+                setWarning({message: "Unable to upload PDF. Error: " + error.response.data});
+                setTimeout(()=>{
+                    removeWarning();
+                }, 5000);
+            })
+        }
+        fileInput.click();
+    }
+
+    if(book === undefined)
+        return <div className="individual-book-wrapper"><p>Book not found</p></div>
+
     return (
         <div className="individual-book-wrapper">
             <div className="individual-book">
@@ -146,7 +188,9 @@ function IndividualBook(){
                     <p>{warningMessage}</p>
                 </div>
                 }
+                <button onClick={(e) => addPDF(e)}>Add PDF</button>
             </div>
+            
             <Link to="/" className="page-link">Back to list</Link>
         </div>
     )

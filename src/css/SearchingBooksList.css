@@ -1,0 +1,57 @@
+.search-page{
+    max-height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction:  column;
+    background-color: #FFB300;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 30rem;
+}
+
+.search-page button{
+    height: auto;
+    max-height: 80%;
+    margin: 0;
+    border-radius: 0;
+    background-color: rgb(47, 47, 47);
+    color: white;
+}
+
+.search-page button:hover{
+    background-color: black;
+}
+
+.search-container{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+.search-container input{
+    flex-grow: 1;
+    font-size: 1.3rem;
+    border-radius: 0;
+}
+
+.search-container input:focus{
+    outline: none;
+    border: none;
+}
+
+.books-list{
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.book-display-search{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 1em;
+    padding: 1em;
+    background-color:rgb(253, 196, 91);
+    border-radius: 1rem;
+    font-size: 1.1rem;
+}

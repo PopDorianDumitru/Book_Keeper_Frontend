@@ -14,7 +14,7 @@ const VerifyingPage = () => {
     useEffect(()=>{
         const queryParams = new URLSearchParams(location.search);
         const token = queryParams.get('token');
-        getAxiosInstance().post(`${process.env.REACT_APP_BASIC_URL}/verify?token=${token}`, {email: getUser()?.email})
+        getAxiosInstance().post(`${process.env.REACT_APP_BASIC_URL}/verify?token=${token}`)
         .then(()=>{
             setSuccess({message: "User verified successfully"});
             setVerified(true);

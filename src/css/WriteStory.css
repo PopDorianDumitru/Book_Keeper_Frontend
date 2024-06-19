@@ -1,0 +1,26 @@
+.text-area{
+    height: 100%;
+    background-color: #FFB300;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+
+.text-area textarea{
+    padding: 1rem;
+    width: 80rem;
+    height: 30rem;
+    border: none;
+    color: rgb(0, 0, 0);   
+    outline: none;
+    background-color: #ffcb53;
+    resize: none;
+    white-space: pre-line;
+    font-size: 1.3rem;
+}
+
+.button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

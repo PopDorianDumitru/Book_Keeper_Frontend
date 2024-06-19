@@ -188,6 +188,8 @@ function BookListDisplay(){
         if (node) observer.current.observe(node);
     }, []);
 
+  
+
 
 
     return(

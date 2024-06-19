@@ -16,6 +16,8 @@ const LeftNavBar = () => {
             {!getConnection() && <Link to="/login"><button>Log In</button></Link>}
             {getConnection() && <div className="nav-bar-component"><button onClick={logOut}>Log out</button></div>}
             {getConnection() && getRole() == "admin" && <Link to="/moderator_registration"><button>Add Moderator</button></Link>}
+            {getConnection() && <Link to={"/search"}><button>Search By Author</button></Link>}
+            {getConnection() && <Link to={"/user-stories"}><button>Your Stories</button></Link>}
         </div>
     )
 }

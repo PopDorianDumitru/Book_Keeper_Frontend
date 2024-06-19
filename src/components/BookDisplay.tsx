@@ -7,6 +7,8 @@ import { BookReview } from "../interfaces/BookReviewInterface";
 import ReviewDisplay from "./ReviewDisplay";
 import useBookReviewStore from "../store/bookReviewStore";
 import ChatGptChat from "./ChatGptChat";
+import useNotificationStore from "../store/notificationStore";
+import { AxiosError } from "axios";
 function BookDisplay({ID, title, author, language,year}:Book){
 
     const [rating, setRating] = useState<string | number>("calculating...");
@@ -14,6 +16,7 @@ function BookDisplay({ID, title, author, language,year}:Book){
     const {getPage,increasePage,bookReviews,setBookReviews,resetPage} = useBookReviewStore.getState();
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const [displayReviews, setDisplayReviews] = useState(false);
+    const {setSuccess, removeSuccess, setWarning, removeWarning} = useNotificationStore(state=>state);
     useEffect(()=>{
         resetPage();
         console.log("Use effect in book display")
@@ -82,6 +85,33 @@ function BookDisplay({ID, title, author, language,year}:Book){
         
     }
 
+    function openPDF(): void {
+        try{
+            getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/pdfs/${ID}`, {responseType: "arraybuffer", headers: {Accept: 'application/pdf'}})
+            .then((response)=>{
+                const blob = new Blob([response.data], {type: 'application/pdf'});
+                const url = window.URL.createObjectURL(blob);
+                window.open(url);
+            })
+            .catch((error: AxiosError)=>{
+                if(error.code !== "ERR_NETWORK" && error.response?.status === 401)
+                    return;
+                setWarning({message: "PDF of that book is currently not available."});
+                setTimeout(()=>{
+                    removeWarning();
+                }, 4000);
+            });
+        }
+        catch(error : any){
+            if(error.code !== "ERR_NETWORK" &&error.response.status === 401)
+                return;
+            setWarning({message: "PDF of that book is currently not available."});
+            setTimeout(()=>{
+                removeWarning();
+            }, 4000);
+        }
+    }
+
     return (     
         <div className="book-display">
             <p>Title: {title}</p>
@@ -91,13 +121,14 @@ function BookDisplay({ID, title, author, language,year}:Book){
             <p>Average Rating: {rating}</p>
             {/* <button onClick={()=>{deleteBook(ID)}}>Remove Book</button> */}
             <ChatGptChat bookTitle={title} />
+            <button onClick={() => openPDF()}>Open PDF</button>
             <Link to={"/book/" + ID} className="page-link">Edit book</Link>
             <Link to={"/review/" + ID} className="page-link">Review book</Link>
             <Link to={"/"} className="page-link">Back to books</Link>
             <button onClick={()=>{
                     getInitialReviews();
                 }
-            }>
+            }> 
             {displayReviews? "Hide reviews": "Show reviews"}</button>
             <div ref={parentRef} className="review-box">
             {

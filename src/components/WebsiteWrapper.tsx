@@ -20,6 +20,9 @@ import LogOutConfirmation from "./LogOutConfirmation";
 import VerifyingPage from "./VerifyingPage";
 import ModeratorAdditionForm from "./ModeratorAdditionForm";
 import UsersChat from "./UsersChat";
+import SearchingBooksList from "./SearchingBooksList";
+import UserStoryPage from "./UserStoryPage";
+import WriteStory from "./WriteStory";
 
 /*
 Creating this component above the router in order to keep track of the elements added between the switching of pages
@@ -175,6 +178,9 @@ function WebsiteWrapper(){
                 <Route path="/login" element={<LogInForm></LogInForm>}></Route>
                 <Route path="/verify" element={<VerifyingPage></VerifyingPage>}></Route>
                 <Route path="/moderator_registration" element={<ModeratorAdditionForm></ModeratorAdditionForm>} />
+                <Route path="/search" element={<SearchingBooksList></SearchingBooksList>} />
+                <Route path="/user-stories" element={<UserStoryPage></UserStoryPage>} />
+                <Route path="/user-stories/:id" element={<WriteStory></WriteStory>} />
             </Routes>
             {
                 visible &&
