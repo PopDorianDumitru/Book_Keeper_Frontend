@@ -9,16 +9,22 @@ import useBookReviewStore from "../store/bookReviewStore";
 import ChatGptChat from "./ChatGptChat";
 import useNotificationStore from "../store/notificationStore";
 import { AxiosError } from "axios";
+import { WhatsappIcon, WhatsappShareButton } from "react-share";
+import { get } from "lodash";
 function BookDisplay({ID, title, author, language,year}:Book){
 
     const [rating, setRating] = useState<string | number>("calculating...");
     const parentRef = useRef<HTMLDivElement>(null);
+    const [picture, setPicture] = useState<string>("");
     const {getPage,increasePage,bookReviews,setBookReviews,resetPage} = useBookReviewStore.getState();
     const {getAxiosInstance} = useAxiosStore(state=>state);
     const [displayReviews, setDisplayReviews] = useState(false);
     const {setSuccess, removeSuccess, setWarning, removeWarning} = useNotificationStore(state=>state);
     useEffect(()=>{
         resetPage();
+        getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/photo/${ID}`)
+        .then((response) => {setPicture(response.data)})
+        .catch((error) => console.log(error));
         console.log("Use effect in book display")
         getAxiosInstance().get(`${process.env.REACT_APP_BASIC_URL}/reviews/book/${ID}/rating`)
         .then(response=>{
@@ -114,16 +120,28 @@ function BookDisplay({ID, title, author, language,year}:Book){
 
     return (     
         <div className="book-display">
-            <p>Title: {title}</p>
-            <p>Author: {author}</p>
-            <p>Language: {language}</p>
-            <p>Year published: {isNaN(year)? "unknown" : year}</p>
-            <p>Average Rating: {rating}</p>
+            <div className="book-information">
+                <img alt="Not available :(" src={picture} className="book-picture" />
+                <div>
+                    <p>Title: {title}</p>
+                    <p>Author: {author}</p>
+                    <p>Language: {language}</p>
+                    <p>Year published: {isNaN(year)? "unknown" : year}</p>
+                    <p>Average Rating: {rating}</p>
+                </div>
+                
+            </div>
+            
             {/* <button onClick={()=>{deleteBook(ID)}}>Remove Book</button> */}
             <ChatGptChat bookTitle={title} />
             <button onClick={() => openPDF()}>Open PDF</button>
             <Link to={"/book/" + ID} className="page-link">Edit book</Link>
             <Link to={"/review/" + ID} className="page-link">Review book</Link>
+            <div className="sharing-container">
+                <WhatsappShareButton url={`Check out this book: ${window.location.href}`}>
+                    <WhatsappIcon />
+                </WhatsappShareButton>
+            </div>
             <Link to={"/"} className="page-link">Back to books</Link>
             <button onClick={()=>{
                     getInitialReviews();

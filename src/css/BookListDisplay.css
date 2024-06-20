@@ -19,6 +19,12 @@
     max-width: 100%;
 }
 
+.book-information{
+    display: flex;
+    flex-direction: row;
+
+}
+
 .book-display button{
     flex-grow: 1;
 }
@@ -31,4 +37,13 @@
     max-height: 50vh;
     overflow: auto;
     margin-top: 1em;
+}
+.book-picture{
+    width: 15rem;
+    height: 15rem;
+}
+.sharing-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

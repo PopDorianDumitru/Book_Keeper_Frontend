@@ -8,6 +8,7 @@ import useNotificationStore from "../store/notificationStore";
 import { set } from "lodash";
 const WriteStory = () => {
     const [story, setStory] = useState<string>("");
+    const [imageDescription, setImageDescription] = useState<string>("");    
     const {id} = useParams();
     const renderRef = useRef<boolean>(false);
     const nav = useNavigate();
@@ -84,15 +85,32 @@ const WriteStory = () => {
             }, 5000);
         });
     }
+    const [imageURL, setImageURL] = useState<string>("");
+
+    function generateImage(event: React.MouseEvent): void {
+        getAxiosInstance().post(`${process.env.REACT_APP_BASIC_URL}/generatePhoto`, {input: imageDescription})
+        .then((response) => {
+            setImageURL(response.data)
+        })
+        .catch((error)  => {
+            console.log(error)
+        })
+    }
 
     return (
         <div>
-            <div className="text-area">
-                <textarea value={story} onChange={(e) => setStory(e.currentTarget.value)} placeholder="Write your story here"></textarea>
+            <div className="book-area">
+                <div className="text-area">
+                    <textarea value={story} onChange={(e) => setStory(e.currentTarget.value)} placeholder="Write your story here"></textarea>
+                </div>
+                {imageURL !== "" && <img src={`data:image/jpeg;base64,${imageURL}`} alt="Generated" />}
             </div>
+            
             <div className="button-container">
                 <button onClick={getSuggestion}>Generate AI Suggestion</button>
                 <button onClick={savePDF}>Save PDF</button>
+                <input value={imageDescription} onChange={(e) => setImageDescription(e.currentTarget.value)} type="text" placeholder="Describe image"></input>
+                <button onClick={generateImage}>Generate an Image</button>
             </div>
         </div>
     )

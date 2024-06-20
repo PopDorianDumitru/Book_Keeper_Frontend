@@ -24,3 +24,10 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+
+.book-area{
+    display: flex;
+    flex-direction: row;
+    
+}
